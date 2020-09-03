@@ -1,0 +1,22 @@
+#!/bin/bash
+
+FILES_TO_CHECK=(
+    .env.example
+    package.json
+    composer.json
+)
+
+git_diff_files="$(git diff --name-only ORIG_HEAD HEAD)"
+
+modified_files=""
+
+for item in ${FILES_TO_CHECK[*]}
+    do
+        if grep -q "$item" <<< "$git_diff_files"; then
+            modified_files="$modified_files"$'\n'"$item"
+        fi
+    done
+
+if [ ! -z "$modified_files" ]; then
+    osascript -e 'display notification "'"$modified_files"'" with title "Files Updated!" sound name "Submarine"'
+fi
